@@ -1,0 +1,24 @@
+{
+  "name": "telegram-admin-chat-bot",
+  "version": "1.0.0",
+  "description": "Developing ...",
+  "main": "bot.js",
+  "dependencies": {
+    "telegraf": "^3.38.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elanaliev/telegram-admin-chat-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elanaliev/telegram-admin-chat-bot/issues"
+  },
+  "homepage": "https://github.com/elanaliev/telegram-admin-chat-bot#readme"
+}
