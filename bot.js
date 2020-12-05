@@ -1,5 +1,5 @@
 /*  
-    !- Release v1.0 -!
+    !- Beta v1.0 -!
     https://github.com/elanaliev/telegram-admin-chat-bot
     https://github.com/elanaliev
 */
@@ -16,23 +16,25 @@ bot.use((msg, next) => {
 
 bot.command('ban', (msg) => {
     replyAction(msg, (from) => {
-        msg.reply('Ban ' + from.username);
-        msg.kickChatMember(from.id);
+        msg.kickChatMember(from.id, 400000).then((result) => {
+            msg.reply('Ban ' + `@${from.username}` + ' : ' + result);
+        })
     })
 })
 
 bot.command('unban', (msg) => {
     replyAction(msg, (from) => {
-        msg.reply('Unban ' + from.username);
-        msg.unbanChatMember(from.id);
+        msg.unbanChatMember(from.id).then((result) => {
+            msg.reply('Unban ' + `@${from.username}` + ' : ' + result);
+        });
     })
 })
 
 function replyAction(msg, action){
     getAccess(msg, () => {
-        let unbanfrom = msg.message.reply_to_message.from; 
-        if(unbanfrom.is_bot === false){
-            action(unbanfrom);
+        let from = msg.message.reply_to_message.from; 
+        if(from.is_bot === false){
+            action(from);
         }   
     });
 }
