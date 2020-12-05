@@ -24,12 +24,14 @@ const keyboards = {
 }
 
 bot.use((msg, next) => {
+    //Debug
     console.log(`Message from: ${msg.from.username} - Id: ${msg.from.id}`);
     next();
 })
 
 bot.command('admin', (msg) => {
     replyAction(msg, (from) => {
+        // JsonRead text
         msg.reply(`Меню функций к пользователю ${(from.username === undefined) ? from.first_name : '@' + from.username}.\nЧто вы хотите сделать?`, CreateInlineKeyboard(keyboards.admin(from)).mark)
     })
 }).on('callback_query', (msg) => {
