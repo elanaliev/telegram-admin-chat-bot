@@ -11,12 +11,7 @@ module.exports.ReadJson = function(path = 'info.json'){
                 token:_json.token
             } 
         },
-        getChat:(globalChatId) => {
-            if(globalChatId !== undefined && globalChatId !== null){
-                return _json.chats.globalChatId;
-            }
-            else return undefined;
-        }
+        /* Something else */
     }
 }
 
