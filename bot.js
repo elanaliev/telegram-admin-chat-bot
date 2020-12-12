@@ -1,6 +1,6 @@
 const telegraf = require('telegraf').default;
-const JRead = require('./JsonRead');
-const token = JRead.ReadJson().getToken().token;
+const data = require('./Data');
+const token = data.Read().getToken().token;
 
 let bot = new telegraf(token);
 
@@ -8,39 +8,62 @@ const commands = {
     ban : (msg, id) => {
         replyAction(msg, (from) => {
             msg.kickChatMember((id === undefined) ? from.id : id);
+            msg.deleteMessage();
         })
     },
     unban : (msg, id) => {
         replyAction(msg, (from) => {
             msg.unbanChatMember((id === undefined) ? from.id : id);
             msg.reply('Done!');
+            msg.deleteMessage();
         })
     }
 }
+
 const keyboards = {
     admin : (from) => {
-        return [[{text:'Ban', callback_data:`{"ban":${from.id}}`}, {text:'Unban', callback_data:`{"unban":${from.id}}`}]]       
+        return [[{text:'Ban', callback_data:`{"ban":${from.id}}`}, {text:'Kick', callback_data:`{"unban":${from.id}}`}]]       
     }
 }
 
 bot.use((msg, next) => {
-    //Debug
     console.log(`Message from: ${msg.from.username} - Id: ${msg.from.id}`);
+    next();
+})
+
+bot.on('text', (msg, next) => {
+    let user = (msg.from.username !== undefined) ? '@' + msg.from.username : msg.from.first_name;
+    let word = RegExp(data.Read().getChatConfig(msg.chat.id).fbdwords.join('|'));
+    if(word.toString() != '/(?:)/'){
+        if(msg.message.text.replace(/ /g,'').match(word)){
+            msg.deleteMessage();
+            msg.replyWithHTML(`${user}, ваше сообщение содержало запрещенное слово и было удалено.`);
+        }
+    }    
     next();
 })
 
 bot.command('admin', (msg) => {
     replyAction(msg, (from) => {
-        // JsonRead text
         msg.reply(`Меню функций к пользователю ${(from.username === undefined) ? from.first_name : '@' + from.username}.\nЧто вы хотите сделать?`, CreateInlineKeyboard(keyboards.admin(from)).mark)
     })
 }).on('callback_query', (msg) => {
     getAccess(msg, () => {
+        console.log(msg.callbackQuery.data);
         let a = JSON.parse(msg.callbackQuery.data);
         let key = Object.keys(a)[0];
         commands[key](msg, a[key]);
-        msg.deleteMessage();
     })
+})
+
+bot.command('addfwords', (msg) => {
+    getAccess(msg, () => {
+        let id = msg.chat.id;
+        let fbd = [];
+        msg.message.text.replace('/addfwords ', '').match(/.*?\;/g).forEach(element => fbd.push(element.replace(';', '')));
+        console.log(fbd);
+        data.Write(id, {atr:'fbdwords', val:fbd});
+    })    
 })
 
 bot.command('ban', (msg) => commands.ban(msg));
