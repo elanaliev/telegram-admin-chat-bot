@@ -12,6 +12,7 @@ module.exports.Read = function(path = 'config.json'){
             } 
         },
         getChatConfig:(id)=>{
+            if(_json[id] === undefined) _json[id] = {"fbdwords":[""]};
             return _json[id];
         }
         /* Something else */
